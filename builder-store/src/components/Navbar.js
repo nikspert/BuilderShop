@@ -31,9 +31,9 @@ class Navigation extends React.Component {
             <Nav.Link href="#home">Home</Nav.Link>
           {component}
           </Nav>
-          <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-            <Button variant="outline-success">Search</Button>
+          <Form onSubmit={this.props.onSearchFormSubmit} inline>
+            <FormControl type="text" placeholder="Search" name="request" className="mr-sm-2" />
+            <Button variant="outline-success" type="submit">Search</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>

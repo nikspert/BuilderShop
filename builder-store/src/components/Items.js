@@ -9,38 +9,43 @@ class Items extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      isLoaded: false,
-      items: []
+      reqResults: {
+        isLoaded: false,
+        Error: null
+      }
+      // items: []
     };
   }
 
   componentDidMount() {
-    getItems().then(
-          (result) => {
-            this.setState({
-              isLoaded: true,
-              items: result.data
-            });
-          },(error) => {
-            this.setState({
-              isLoaded: true,
-              error
-            });
-          }
-        )
+    // getItems().then(
+    //       (result) => {
+    //         this.setState({
+    //           isLoaded: true,
+    //           items: result.data
+    //         });
+    //       },(error) => {
+    //         this.setState({
+    //           isLoaded: true,
+    //           error
+    //         });
+    //       }
+    //     )
+    this.props.getDisplayItems().then(result=>{
+      this.setState({reqResults:result});
+    })
   }
   
 
   render() {      
-    const { error, isLoaded, items } = this.state;
-      if (error) {
-        return <div>Error: {error.message}</div>;
+    const { Error, isLoaded } = this.state.reqResults;
+      if (Error) {
+        return <div>Error: {Error.message}</div>;
       } else if (!isLoaded) {
         return <div>Loading...</div>;
       } else {
         const shopItems=[];
-        items.forEach(item => {       
+        this.props.currentItems.forEach(item => {       
           shopItems.push(<Item
             LoggedIn={this.props.LoggedIn}
             Item={item}
