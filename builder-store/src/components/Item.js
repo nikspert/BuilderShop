@@ -8,6 +8,20 @@ class Item extends React.Component {
   
   render() {
     const Item = this.props.Item;
+    let footerLinks;
+    if(this.props.LoggedIn)
+    {
+      footerLinks=(<>
+      <Card.Link href="#">Delete item</Card.Link>
+      <Card.Link href="#">Edit item</Card.Link>
+      </>)
+    }
+    else{
+      footerLinks=(<>
+        <Card.Link href="#">View item</Card.Link>
+        <Card.Link href="#">Buy item</Card.Link>
+        </>)
+    }
     return (
 <Card className="Item">
   <Card.Body>
@@ -16,8 +30,7 @@ class Item extends React.Component {
     <Card.Text>
         {Item.description}
     </Card.Text>
-    <Card.Link href="#">Delete item</Card.Link>
-    <Card.Link href="#">Another Link</Card.Link>
+      {footerLinks}
   </Card.Body>
 </Card>
     );

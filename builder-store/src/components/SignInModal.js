@@ -39,7 +39,7 @@ export default class SignInModal extends React.Component {
                 <Modal.Title>Sign in</Modal.Title>
               </Modal.Header>
               
-              <Form>            
+              <Form onSubmit={this.props.onSubmit}>            
               <Modal.Body>
     
                 <Form.Group controlId="formBasicEmail">
