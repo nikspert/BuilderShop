@@ -4,7 +4,7 @@ import Items from './components/Items';
 import Navigation from './components/Navbar';
 import {Container} from "react-bootstrap";
 import {SignIn} from './API/Auth';
-import {getItems} from './API/Items';
+import {getItems, createItem} from './API/Items';
 
 class App extends React.Component {
   
@@ -16,8 +16,7 @@ class App extends React.Component {
      
       error: null,
       isLoaded: false,
-      items: [],
-      currentItems: []
+      searchRequest: ""
       
     };
   } 
@@ -48,27 +47,12 @@ class App extends React.Component {
       const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());      
       
-      const searchRequest=formDataObj.request.toLowerCase();
-      this.setState({currentItems:this.state.items.filter(item=>{return item.name.toLowerCase().includes(searchRequest);})});
+      const search=formDataObj.request.toLowerCase();
+      // this.setState({currentItems:this.state.items.filter(item=>{return item.name.toLowerCase().includes(searchRequest);})});
+      this.setState({searchRequest:search});
     }
 
-    getDisplayItems=()=>{
-     return getItems().then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.data,
-            currentItems: result.data
-          });
-          return {isLoaded: true, Error: null};
-        },(error) => {
-      return{
-            isLoaded: true,
-            Error: error
-          };
-        }
-      )
-    }
+   
 
     
   render() {
@@ -79,7 +63,8 @@ class App extends React.Component {
     
     <Container className="Container">
 
-        <Items getDisplayItems={this.getDisplayItems} currentItems={this.state.currentItems} LoggedIn={this.state.LoggedIn} user={this.state.user}></Items>
+        <Items getDisplayItems={this.getDisplayItems} searchRequest={this.state.searchRequest} 
+        LoggedIn={this.state.LoggedIn} user={this.state.user}></Items>
         
         
    </Container>

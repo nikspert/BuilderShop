@@ -2,50 +2,80 @@ import React from 'react';
 import {Card} from "react-bootstrap";
 import Item from './Item';
 import './Styles/Styles.css';
-import {getItems} from '../API/Items';
-
+import {getItems, createItem} from '../API/Items';
+import ItemCreateModal from './ItemCreateModal';
 class Items extends React.Component {
   
   constructor(props) {
     super(props);
     this.state = {
-      reqResults: {
         isLoaded: false,
-        Error: null
-      }
-      // items: []
+        Error: null,
+        items: [],
+        formStatus:"Pending"
     };
   }
 
+
   componentDidMount() {
-    // getItems().then(
-    //       (result) => {
-    //         this.setState({
-    //           isLoaded: true,
-    //           items: result.data
-    //         });
-    //       },(error) => {
-    //         this.setState({
-    //           isLoaded: true,
-    //           error
-    //         });
-    //       }
-    //     )
-    this.props.getDisplayItems().then(result=>{
-      this.setState({reqResults:result});
-    })
+    getItems()
+    .then((result) => {
+          this.setState({
+              isLoaded: true,
+              items: result.data});},
+          (error) => {
+            this.setState({
+              isLoaded: true,
+              Error:error
+            });
+          }
+        )  
+    }
+
+
+  itemFilter=(request)=>{
+   return this.state.items.filter(item=>item.name.toLowerCase().includes(request))
   }
-  
+
+  handleItemCreate=e=>{
+    e.preventDefault();
+
+    const formData = new FormData(e.target),
+    formDataObj = Object.fromEntries(formData.entries());
+
+    createItem(formDataObj,"Bearer "+this.props.user.token)
+    .then(result=>{
+    if(!result.success) throw new Error("Failed to create item");
+      this.setState( prevState=>({
+        items:[...prevState.items,result.data],
+        formStatus:"Created" 
+      }));
+      e.target.reset();
+    console.log(this.state.items);
+    }).catch(error=>{
+      console.log(error);
+      this.setState({
+      formStatus:"Error" 
+      });
+    });
+  }
+
+  refreshForm=()=>{
+    this.setState({formStatus:"Pending"});
+  }
+
 
   render() {      
-    const { Error, isLoaded } = this.state.reqResults;
+    const { Error, isLoaded } = this.state;
       if (Error) {
         return <div>Error: {Error.message}</div>;
-      } else if (!isLoaded) {
+      } 
+      else if (!isLoaded) {
         return <div>Loading...</div>;
-      } else {
+      } 
+      else {
         const shopItems=[];
-        this.props.currentItems.forEach(item => {       
+        this.itemFilter((this.props.searchRequest)).forEach(item => {       
           shopItems.push(<Item
             LoggedIn={this.props.LoggedIn}
             Item={item}
@@ -58,11 +88,7 @@ class Items extends React.Component {
               <div className="Items">
 
                   {shopItems}
-                  <Card className="AddItem">
-                  <Card.Body>
-                   <p className="noselect">+</p>
-                   </Card.Body>
-                  </Card>
+                  <ItemCreateModal refreshForm={this.refreshForm} formStatus={this.state.formStatus} handleItemCreate={this.handleItemCreate}></ItemCreateModal>
                 </div>
                 )}
               else 
