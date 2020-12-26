@@ -16,6 +16,19 @@ export async function createItem(data,Bearer){
   });
   return await response.json(); 
 }
+
+export async function updateItem(data,id,Bearer){
+  const response = await fetch("http://localhost:5000/api/v1/items/"+id, {
+    method: 'PUT', 
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': Bearer           
+    },
+    body: JSON.stringify(data) 
+  });
+ return await response.json(); 
+}
+
 export async function deleteItem(id,Bearer){
   const response = await fetch("http://localhost:5000/api/v1/items/"+id, {
    method: 'DELETE', 

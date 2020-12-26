@@ -2,15 +2,12 @@ import React from 'react';
 import { Navbar, Nav, Form, Button, FormControl } from 'react-bootstrap';
 import SignInModal from './SignInModal';
 import './Styles/Styles.css';
-import {SignIn} from '../API/Auth';
+
 
 class Navigation extends React.Component {
 
   
-  constructor(props) {
-    super(props);
-   
-  }
+
 
   
 
@@ -28,7 +25,8 @@ class Navigation extends React.Component {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
+          <Nav.Link href="#home">Home</Nav.Link>
+          <Nav.Link href="#home">Order</Nav.Link>
           {component}
           </Nav>
           <Form onSubmit={this.props.onSearchFormSubmit} inline>

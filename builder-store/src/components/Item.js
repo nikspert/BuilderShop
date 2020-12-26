@@ -2,6 +2,10 @@ import React from 'react';
 import {Card,Button} from "react-bootstrap";
 import './Styles/Styles.css';
 
+import ItemModalForm from './ItemModalForm';
+
+
+
 
 class Item extends React.Component {
   
@@ -12,7 +16,16 @@ class Item extends React.Component {
     if(this.props.LoggedIn)
     {
       footerLinks=(<>
-       <Button  variant="outline-info">Edit</Button>
+       {/* <Button  variant="outline-info">Edit</Button> */}
+       {/* <ItemEditModal  item={Item} refreshForm={this.props.refreshForm} 
+       formEditStatus={this.props.formEditStatus} handleItemUpdate={this.props.handleItemUpdate}>
+       </ItemEditModal> */}
+        <ItemModalForm title="Update" item={Item} refreshForm={this.props.refreshForm} 
+       formStatus={this.props.formStatus} handleSubmit={this.props.handleItemUpdate}>
+         {openMethod=>{
+         return <Button onClick={openMethod}  variant="outline-info">Edit</Button>
+         }}
+         </ItemModalForm>
        <Button onClick={this.props.handleItemDelete.bind(this,Item._id)} variant="outline-danger">Delete</Button>
       </>)
     }

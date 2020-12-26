@@ -4,7 +4,7 @@ import Items from './components/Items';
 import Navigation from './components/Navbar';
 import {Container} from "react-bootstrap";
 import {SignIn} from './API/Auth';
-import {getItems, createItem} from './API/Items';
+
 
 class App extends React.Component {
   

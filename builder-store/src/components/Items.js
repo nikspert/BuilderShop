@@ -1,9 +1,12 @@
 import React from 'react';
 import {Card} from "react-bootstrap";
-import Item from './Item';
 import './Styles/Styles.css';
-import {getItems, createItem, deleteItem} from '../API/Items';
-import ItemCreateModal from './ItemCreateModal';
+
+import Item from './Item';
+import ItemModalForm from './ItemModalForm';
+
+import {getItems, createItem, updateItem, deleteItem} from '../API/Items';
+
 class Items extends React.Component {
   
   constructor(props) {
@@ -12,6 +15,8 @@ class Items extends React.Component {
         isLoaded: false,
         Error: null,
         items: [],
+        formCreateStatus:"Pending",
+        formEditStatus:"Pending",
         formStatus:"Pending"
     };
   }
@@ -45,22 +50,50 @@ class Items extends React.Component {
 
     createItem(formDataObj,"Bearer "+this.props.user.token)
     .then(result=>{
-    if(!result.success) throw new Error("Failed to create item");
-      this.setState(
+        if(!result.success) throw new Error("Failed to create item");
+        this.setState(
         prevState=>({
         items:[...prevState.items,result.data],
-        formStatus:"Created" 
-      }));
+        formStatus:"Success" 
+        }));
       
-      e.target.reset();
+        e.target.reset();
+    })
+    .catch(error=>{
+        console.log(error);
+        this.setState({
+        formStatus:"Error" 
+        });
+    });
+  }
+
+  handleItemUpdate=(e,id)=>{
+    e.preventDefault();
+
+    const formData = new FormData(e.target),
+    formDataObj = Object.fromEntries(formData.entries());
+    updateItem(formDataObj,id,"Bearer "+this.props.user.token)
+    .then(result=>{
+    if(!result.success) throw new Error("Failed to update item");
+      this.setState({
+        items:this.state.items.map(item=>{
+          if(item._id===id)
+          return result.data;
+          else return item
+        }), 
+       });
+       this.setState({
+        formStatus:"Success" 
+        });     
     })
     .catch(error=>{
       console.log(error);
       this.setState({
-      formStatus:"Error" 
-      });
+        formStatus:"Error" 
+        });
     });
   }
+
 handleItemDelete=(id)=>{
    
   deleteItem(id,"Bearer "+this.props.user.token)
@@ -96,6 +129,9 @@ handleItemDelete=(id)=>{
         this.itemFilter((this.props.searchRequest)).forEach(item => {       
           shopItems.push(<Item
             handleItemDelete={this.handleItemDelete}
+            handleItemUpdate={this.handleItemUpdate}
+            formStatus={this.state.formStatus}
+            refreshForm={this.refreshForm}
             LoggedIn={this.props.LoggedIn}
             Item={item}
             key={item._id} />);
@@ -107,7 +143,15 @@ handleItemDelete=(id)=>{
               <div className="Items">
 
                   {shopItems}
-                  <ItemCreateModal refreshForm={this.refreshForm} formStatus={this.state.formStatus} handleItemCreate={this.handleItemCreate}></ItemCreateModal>
+                  {/* <ItemCreateModal refreshForm={this.refreshForm} formCreateStatus={this.state.formCreateStatus} handleItemCreate={this.handleItemCreate}></ItemCreateModal> */}
+                  <ItemModalForm title="Сreate" refreshForm={this.refreshForm} formStatus={this.state.formStatus} handleSubmit={this.handleItemCreate} >
+                  {openMethod=>{return(
+                  <Card onClick={openMethod} className="AddItem">
+                  <Card.Body>
+                   <p className="noselect">+</p>
+                   </Card.Body>
+                  </Card>)}}
+                  </ItemModalForm>
                 </div>
                 )}
               else 
