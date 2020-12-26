@@ -16,5 +16,14 @@ export async function createItem(data,Bearer){
   });
   return await response.json(); 
 }
-    
+export async function deleteItem(id,Bearer){
+  const response = await fetch("http://localhost:5000/api/v1/items/"+id, {
+   method: 'DELETE', 
+   headers: {
+     'Content-Type': 'application/json',
+     'Authorization': Bearer           
+   }
+ });
+ return await response.json(); 
+}
   

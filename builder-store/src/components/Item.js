@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from "react-bootstrap";
+import {Card,Button} from "react-bootstrap";
 import './Styles/Styles.css';
 
 
@@ -12,8 +12,8 @@ class Item extends React.Component {
     if(this.props.LoggedIn)
     {
       footerLinks=(<>
-      <Card.Link href="#">Delete item</Card.Link>
-      <Card.Link href="#">Edit item</Card.Link>
+       <Button  variant="outline-info">Edit</Button>
+       <Button onClick={this.props.handleItemDelete.bind(this,Item._id)} variant="outline-danger">Delete</Button>
       </>)
     }
     else{

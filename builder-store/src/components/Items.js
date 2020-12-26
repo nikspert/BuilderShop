@@ -2,7 +2,7 @@ import React from 'react';
 import {Card} from "react-bootstrap";
 import Item from './Item';
 import './Styles/Styles.css';
-import {getItems, createItem} from '../API/Items';
+import {getItems, createItem, deleteItem} from '../API/Items';
 import ItemCreateModal from './ItemCreateModal';
 class Items extends React.Component {
   
@@ -46,17 +46,35 @@ class Items extends React.Component {
     createItem(formDataObj,"Bearer "+this.props.user.token)
     .then(result=>{
     if(!result.success) throw new Error("Failed to create item");
-      this.setState( prevState=>({
+      this.setState(
+        prevState=>({
         items:[...prevState.items,result.data],
         formStatus:"Created" 
       }));
+      
       e.target.reset();
-    console.log(this.state.items);
-    }).catch(error=>{
+    })
+    .catch(error=>{
       console.log(error);
       this.setState({
       formStatus:"Error" 
       });
+    });
+  }
+handleItemDelete=(id)=>{
+   
+  deleteItem(id,"Bearer "+this.props.user.token)
+    .then(result=>{
+    if(!result.success) throw new Error("Failed to delete item");
+    
+    this.setState({
+      items: this.state.items.filter(item=> {
+      return item._id !== id; })});
+    }
+    )
+    .catch(error=>{
+      console.log(error);
+      alert(error.message);
     });
   }
 
@@ -77,6 +95,7 @@ class Items extends React.Component {
         const shopItems=[];
         this.itemFilter((this.props.searchRequest)).forEach(item => {       
           shopItems.push(<Item
+            handleItemDelete={this.handleItemDelete}
             LoggedIn={this.props.LoggedIn}
             Item={item}
             key={item._id} />);
@@ -93,16 +112,11 @@ class Items extends React.Component {
                 )}
               else 
               itemsContent=(<div className="Items">{shopItems}</div>)
-          
-            
-            
+                      
       return(
         <div className="Items">
-
-          {itemsContent}
-                 
-        </div>
-      );
+          {itemsContent}                 
+        </div>);
       }
     }
   }
