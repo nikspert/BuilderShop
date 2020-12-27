@@ -5,25 +5,25 @@ import OrderModal from '../Order/OrderModal';
 import '../../Styles/Styles.css';
 
 
-class Navigation extends React.Component {
+function Navigation(props) {
 
-    render() {
+
 
 
       let NavComponent;
-      if (!this.props.LoggedIn){          
-          NavComponent=(<SignInModal onSubmit={this.props.onSubmit}></SignInModal>)
+      if (!props.LoggedIn){          
+          NavComponent=(<SignInModal onSubmit={props.onSubmit}></SignInModal>)
           }else { 
-            this.props.user.role==='user'? 
-            NavComponent=(<><OrderModal user={this.props.user}></OrderModal>
-            <Button onClick={this.props.onLogout} variant="outline-success">
-              Logout {this.props.user.name}
+            props.user.role==='user'? 
+            NavComponent=(<><OrderModal user={props.user}></OrderModal>
+            <Button onClick={props.onLogout} variant="outline-success">
+              Logout {props.user.name}
             </Button></>):
             NavComponent=(
-            <Button onClick={this.props.onLogout} variant="outline-success">
-            Logout {this.props.user.name}
+            <Button onClick={props.onLogout} variant="outline-success">
+            Logout {props.user.name}
             </Button>);          
-        }  
+          }
           
       return (
         <Navbar bg="light" expand="lg">
@@ -35,7 +35,7 @@ class Navigation extends React.Component {
        
           {NavComponent}
           </Nav>
-          <Form onSubmit={this.props.onSearchFormSubmit} inline>
+          <Form onSubmit={props.onSearchFormSubmit} inline>
             <FormControl type="text" placeholder="Search" name="request" className="mr-sm-2" />
             <Button variant="outline-success" type="submit">Search</Button>
           </Form>
@@ -43,6 +43,6 @@ class Navigation extends React.Component {
       </Navbar>
       );
     }
-  }
+  
 
   export default Navigation;

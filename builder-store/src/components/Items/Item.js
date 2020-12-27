@@ -4,26 +4,26 @@ import '../../Styles/Styles.css';
 
 import ItemModalForm from './ItemModalForm';
 
-class Item extends React.Component {
+function Item(props) {
   
-  render() {
-    const Item = this.props.Item;
+
+    const Item = props.Item;
     let footerLinks;
-    if(this.props.LoggedIn&&this.props.user?.role==='admin')
+    if(props.LoggedIn&&props.user?.role==='admin')
     {
       footerLinks=(<>       
-        <ItemModalForm title="Update" item={Item} refreshForm={this.props.refreshForm} 
-       formStatus={this.props.formStatus} handleSubmit={this.props.handleItemUpdate}>
+        <ItemModalForm title="Update" item={Item} refreshForm={props.refreshForm} 
+       formStatus={props.formStatus} handleSubmit={props.handleItemUpdate}>
          {openMethod=>{
          return <Button onClick={openMethod}  variant="outline-info">Edit</Button>
          }}
          </ItemModalForm>
-       <Button onClick={this.props.handleItemDelete.bind(this,Item._id)} variant="outline-danger">Delete</Button>
+       <Button onClick={props.handleItemDelete.bind(this,Item._id)} variant="outline-danger">Delete</Button>
       </>)
     }
-    else if(this.props.user?.role==='user'){
+    else if(props.user?.role==='user'){
       footerLinks=(<>
-       <Button  onClick={this.props.handleItemBuy.bind(this,Item)} variant="outline-primary">Buy</Button>
+       <Button  onClick={props.handleItemBuy.bind(this,Item)} variant="outline-primary">Buy</Button>
         </>)
     }
     else{
@@ -42,6 +42,5 @@ class Item extends React.Component {
         </Card>
             );
           }
-        }
-
+        
 export default Item;
