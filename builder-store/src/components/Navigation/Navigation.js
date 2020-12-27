@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Form, Button, FormControl } from 'react-bootstrap';
 import SignInModal from './SignInModal';
+import SignUpModal from './SignUpModal';
 import OrderModal from '../Order/OrderModal';
 import '../../Styles/Styles.css';
 
@@ -12,7 +13,7 @@ function Navigation(props) {
 
       let NavComponent;
       if (!props.LoggedIn){          
-          NavComponent=(<SignInModal onSubmit={props.onSubmit}></SignInModal>)
+          NavComponent=(<><SignUpModal onSubmit={props.onSignUpFormSubmit}></SignUpModal><SignInModal onSubmit={props.onSignInFormSubmit}></SignInModal></>)
           }else { 
             props.user.role==='user'? 
             NavComponent=(<><OrderModal user={props.user}></OrderModal>

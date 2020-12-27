@@ -43,7 +43,6 @@ export default class OrderModal extends React.Component {
           formDataObj = Object.fromEntries(formData.entries());
       
           let order=JSON.parse(localStorage.getItem('order'));
-            console.log(order);
             if(order!==null&&order.length!==0)
             {    
               order=order.map(product=>

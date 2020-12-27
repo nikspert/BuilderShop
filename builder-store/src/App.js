@@ -3,7 +3,7 @@ import React from 'react';
 import Items from './components/Items/Items';
 import Navigation from './components/Navigation/Navigation';
 import {Container} from "react-bootstrap";
-import {SignIn} from './API/Auth';
+import {SignIn, SignUp} from './API/Auth';
 
 
 class App extends React.Component {
@@ -40,13 +40,26 @@ class App extends React.Component {
             })            
     }
 
+    onSignUpFormSubmit = e => {
+      e.preventDefault();
+      const formData = new FormData(e.target),
+      formDataObj = Object.fromEntries(formData.entries());
+      SignUp(formDataObj)
+      .then((result) => {
+        if(!result.success) throw new Error("Failed to sign up")  
+          this.setState({
+           LoggedIn:true,
+           user:result});})
+      .catch(error => {
+        alert(error);})            
+      }
+
     onSearchFormSubmit=e=>{
       e.preventDefault();
       const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());      
       
       const search=formDataObj.request.toLowerCase();
-      // this.setState({currentItems:this.state.items.filter(item=>{return item.name.toLowerCase().includes(searchRequest);})});
       this.setState({searchRequest:search});
     }
 
@@ -56,7 +69,8 @@ class App extends React.Component {
   render() {
     return(
     <>
-    <Navigation onSearchFormSubmit={this.onSearchFormSubmit} onSubmit={this.onSignInFormSubmit} onLogout={this.onLogout}
+    <Navigation onSearchFormSubmit={this.onSearchFormSubmit} onSignInFormSubmit={this.onSignInFormSubmit}
+     onSignUpFormSubmit={this.onSignUpFormSubmit} onLogout={this.onLogout}
      LoggedIn={this.state.LoggedIn} user={this.state.user}></Navigation>
     
     <Container className="Container">
