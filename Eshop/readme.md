@@ -5,6 +5,7 @@ Rename "config/config.env.env" to "config/config.env" and update the values/sett
  Sign Up functional is not implemented so update database with users from users.json, alternativly
  Create users via postman requests 
  example:
+```
  http://localhost:5000/api/v1/auth/register
     method: POST
         body:
@@ -14,6 +15,7 @@ Rename "config/config.env.env" to "config/config.env" and update the values/sett
             "password": "123214",
             "role":"user"||"admin"
         }
+```
 if users.json was successfully imported 
 use 
 Test@gmail.com
