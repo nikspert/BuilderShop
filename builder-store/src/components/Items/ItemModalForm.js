@@ -1,7 +1,6 @@
 import React from 'react';
 import {Form,Modal,Button, Alert} from 'react-bootstrap';
-import './Styles/Styles.css';
-
+import '../../Styles/Styles.css';
 
 export default class ItemModalForm extends React.Component {
 

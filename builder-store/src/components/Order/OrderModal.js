@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form,Modal,Table,Button, Alert } from 'react-bootstrap';
 
-import {createOrder} from '../API/Order';
+import {createOrder} from '../../API/Order';
 
 export default class OrderModal extends React.Component {
 

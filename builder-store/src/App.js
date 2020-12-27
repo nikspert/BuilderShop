@@ -1,7 +1,7 @@
 
 import React from 'react';
-import Items from './components/Items';
-import Navigation from './components/Navigation';
+import Items from './components/Items/Items';
+import Navigation from './components/Navigation/Navigation';
 import {Container} from "react-bootstrap";
 import {SignIn} from './API/Auth';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card,Button} from "react-bootstrap";
-import './Styles/Styles.css';
+import '../../Styles/Styles.css';
 
 import ItemModalForm from './ItemModalForm';
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Navbar, Nav, Form, Button, FormControl } from 'react-bootstrap';
 import SignInModal from './SignInModal';
-import OrderModal from './OrderModal';
-import './Styles/Styles.css';
+import OrderModal from '../Order/OrderModal';
+import '../../Styles/Styles.css';
 
 
 class Navigation extends React.Component {

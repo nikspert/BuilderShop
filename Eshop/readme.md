@@ -1,11 +1,28 @@
-# DevCamper API
-
-> Backend API for DevCamper application, which is a bootcamp directory website
 
 ## Usage
 
 Rename "config/config.env.env" to "config/config.env" and update the values/settings to your own
-
+ Sign Up functional is not implemented so update database with users from users.json, alternativly
+ Create users via postman requests 
+ example:
+ http://localhost:5000/api/v1/auth/register
+    method: POST
+        body:
+        {
+            "name": "A11111",
+            "email": "1@gmail.com",
+            "password": "123214",
+            "role":"user"||"admin"
+        }
+if users.json was successfully imported 
+use 
+Test@gmail.com
+123456
+for regular user
+and
+user@gmail.com
+123456
+for admin
 ## Install Dependencies
 
 ```
@@ -15,31 +32,6 @@ npm install
 ## Run App
 
 ```
-# Run in dev mode
-npm run dev
+# Run 
+npm run dev,
 
-# Run in prod mode
-npm start
-```
-
-## Database Seeder
-
-To seed the database with users, bootcamps, courses and reviews with data from the "\_data" folder, run
-
-```
-# Destroy all data
-node seeder -d
-
-# Import all data
-node seeder -i
-```
-
-## Demo
-
-The API is live at [devcamper.io](https://devcamper.io)
-
-Extensive documentation with examples [here](https://documenter.getpostman.com/view/8923145/SVtVVTzd?version=latest)
-
-- Version: 1.0.0
-- License: MIT
-- Author: Brad Traversy

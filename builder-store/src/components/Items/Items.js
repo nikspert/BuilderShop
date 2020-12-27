@@ -1,11 +1,11 @@
 import React from 'react';
 import {Card} from "react-bootstrap";
-import './Styles/Styles.css';
+import '../../Styles/Styles.css';
 
 import Item from './Item';
 import ItemModalForm from './ItemModalForm';
 
-import {getItems, createItem, updateItem, deleteItem} from '../API/Items';
+import {getItems, createItem, updateItem, deleteItem} from '../../API/Items';
 
 class Items extends React.Component {
   
