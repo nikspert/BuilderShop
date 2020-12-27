@@ -11,9 +11,6 @@ export default class SignInModal extends React.Component {
         };
       }
     
-
-
-
        close=()=> {
         this.setState({ showModal: false });
       }

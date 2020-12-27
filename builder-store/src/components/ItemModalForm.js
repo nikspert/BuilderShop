@@ -68,7 +68,7 @@ export default class ItemModalForm extends React.Component {
                     <Form.Control defaultValue={this.props.item?.unit||""} type="text" placeholder="Unit" name="unit"/>
                 </Form.Group>
                 
-                <Form.Group controlId="formBasicNumber">
+                <Form.Group controlId="formBasicText">
                 <Form.Label>Item description</Form.Label>
                  <Form.Control defaultValue={this.props.item?.description||""} as="textarea" rows={3} placeholder="Description" name="description" />
                 </Form.Group>

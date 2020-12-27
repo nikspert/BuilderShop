@@ -15,11 +15,10 @@ class Items extends React.Component {
         isLoaded: false,
         Error: null,
         items: [],
-        formCreateStatus:"Pending",
-        formEditStatus:"Pending",
-        formStatus:"Pending"
-    };
-  }
+
+        formStatus:"Pending",
+        //  order:JSON.parse(localStorage.getItem('order'))||[]
+      };}
 
 
   componentDidMount() {
@@ -41,6 +40,24 @@ class Items extends React.Component {
   itemFilter=(request)=>{
    return this.state.items.filter(item=>item.name.toLowerCase().includes(request))
   }
+
+  
+  handleItemBuy=(item)=>{
+  let order=JSON.parse(localStorage.getItem('order'))||[];
+   const index=order.findIndex(product=>{
+      return product.item===item._id;
+    });
+    if (index!==-1)
+    { 
+      order[index].count++;
+    }else{    
+        order.push({title:item.name, item:item._id, count: 1});
+    }
+    console.log(order);
+    localStorage.setItem('order', JSON.stringify(order));
+    console.log(localStorage.getItem('order'));
+  }
+
 
   handleItemCreate=e=>{
     e.preventDefault();
@@ -66,6 +83,7 @@ class Items extends React.Component {
         });
     });
   }
+
 
   handleItemUpdate=(e,id)=>{
     e.preventDefault();
@@ -94,7 +112,9 @@ class Items extends React.Component {
     });
   }
 
-handleItemDelete=(id)=>{
+
+
+  handleItemDelete=(id)=>{
    
   deleteItem(id,"Bearer "+this.props.user.token)
     .then(result=>{
@@ -110,6 +130,7 @@ handleItemDelete=(id)=>{
       alert(error.message);
     });
   }
+
 
   refreshForm=()=>{
     this.setState({formStatus:"Pending"});
@@ -128,11 +149,13 @@ handleItemDelete=(id)=>{
         const shopItems=[];
         this.itemFilter((this.props.searchRequest)).forEach(item => {       
           shopItems.push(<Item
+            handleItemBuy={this.handleItemBuy}
             handleItemDelete={this.handleItemDelete}
             handleItemUpdate={this.handleItemUpdate}
             formStatus={this.state.formStatus}
             refreshForm={this.refreshForm}
             LoggedIn={this.props.LoggedIn}
+            user={this.props.user}
             Item={item}
             key={item._id} />);
             });
@@ -143,7 +166,6 @@ handleItemDelete=(id)=>{
               <div className="Items">
 
                   {shopItems}
-                  {/* <ItemCreateModal refreshForm={this.refreshForm} formCreateStatus={this.state.formCreateStatus} handleItemCreate={this.handleItemCreate}></ItemCreateModal> */}
                   <ItemModalForm title="Сreate" refreshForm={this.refreshForm} formStatus={this.state.formStatus} handleSubmit={this.handleItemCreate} >
                   {openMethod=>{return(
                   <Card onClick={openMethod} className="AddItem">

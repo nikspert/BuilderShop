@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Items from './components/Items';
-import Navigation from './components/Navbar';
+import Navigation from './components/Navigation';
 import {Container} from "react-bootstrap";
 import {SignIn} from './API/Auth';
 
@@ -13,9 +13,7 @@ class App extends React.Component {
     this.state = {
       LoggedIn: false,
       user: null,
-     
-      error: null,
-      isLoaded: false,
+    
       searchRequest: ""
       
     };
