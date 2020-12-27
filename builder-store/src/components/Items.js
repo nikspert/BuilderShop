@@ -17,7 +17,6 @@ class Items extends React.Component {
         items: [],
 
         formStatus:"Pending",
-        //  order:JSON.parse(localStorage.getItem('order'))||[]
       };}
 
 
