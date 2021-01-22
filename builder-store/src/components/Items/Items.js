@@ -22,52 +22,47 @@ function Items(props) {
         Error occured while loading items: {Error.message}
       </Alert>
     );
-  } else if (!isLoaded) {
-    return (
-      <Alert variant="warning">
-        <Spinner animation="border" />
-        Loading items, please wait...
-      </Alert>
-    );
-  } else {
-    const shopItems = [];
-    itemFilter(props.searchRequest).forEach((item) => {
-      shopItems.push(
-        <Item
-          handleItemBuy={props.handleItemBuy}
-          handleItemDelete={props.handleItemDelete}
-          handleItemUpdate={props.handleItemUpdate}
-          formStatus={props.formStatus}
-          refreshForm={props.refreshForm}
-          LoggedIn={props.LoggedIn}
-          user={props.user}
-          Item={item}
-          key={item._id}
-        />
+  } else
+    if (!isLoaded) {
+      return (
+        <Alert variant="warning">
+          <Spinner animation="border" />
+          Loading items, please wait...
+        </Alert>
       );
-    });
+    } else {
 
-    let itemsContent;
-    if (props.LoggedIn && props.user.role === "admin") {
-      itemsContent = (
-        <div className="Items">
-          {shopItems}
-          <Card
-            onClick={() => {
-              history.push("/CreateItem");
-            }}
-            className="AddItem"
-          >
-            <Card.Body>
-              <p className="noselect">+</p>
-            </Card.Body>
-          </Card>
-        </div>
-      );
-    } else itemsContent = <div className="Items">{shopItems}</div>;
-
-    return <div className="Items">{itemsContent}</div>;
-  }
+      return <div className="Items">
+        {itemFilter(props.searchRequest).map(item =>
+          <Item
+            handleItemBuy={props.handleItemBuy}
+            handleItemDelete={props.handleItemDelete}
+            handleItemUpdate={props.handleItemUpdate}
+            formStatus={props.formStatus}
+            refreshForm={props.refreshForm}
+            LoggedIn={props.LoggedIn}
+            user={props.user}
+            Item={item}
+            key={item._id}
+          />
+        )}
+        {props.LoggedIn && props.user.role === "admin"
+          ? (<div>
+            <Card
+              onClick={() => {
+                history.push("/CreateItem");
+              }}
+              className="AddItem"
+            >
+              <Card.Body>
+                <p className="noselect">+</p>
+              </Card.Body>
+            </Card>
+          </div>)
+          : null}
+      </div>
+    }
 }
+
 
 export default Items;
