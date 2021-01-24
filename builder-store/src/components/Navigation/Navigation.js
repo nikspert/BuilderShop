@@ -4,37 +4,6 @@ import { Link } from "react-router-dom";
 import "../../Styles/Styles.css";
 
 function Navigation(props) {
-  let NavComponent;
-  if (!props.LoggedIn) {
-    NavComponent = (
-      <>
-        <Nav.Link as={Link} to="/SignUp">
-          Sign up
-        </Nav.Link>
-        <Nav.Link as={Link} to="/SignIn">
-          Sign In
-        </Nav.Link>
-      </>
-    );
-  } else {
-    props.user.role === "user"
-      ? (NavComponent = (
-          <>
-            <Nav.Link as={Link} to="/Order">
-              Order
-            </Nav.Link>
-            <Button onClick={props.onLogout} variant="outline-success">
-              Logout {props.user.name}
-            </Button>
-          </>
-        ))
-      : (NavComponent = (
-          <Button onClick={props.onLogout} variant="outline-success">
-            Logout {props.user.name}
-          </Button>
-        ));
-  }
-
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={Link} to="/">
@@ -46,8 +15,29 @@ function Navigation(props) {
           <Nav.Link as={Link} to="/">
             Home
           </Nav.Link>
-
-          {NavComponent}
+          {!props.LoggedIn ? (
+            <>
+              <Nav.Link as={Link} to="/SignUp">
+                Sign up
+              </Nav.Link>
+              <Nav.Link as={Link} to="/SignIn">
+                Sign In
+              </Nav.Link>
+            </>
+          ) : props.user.role === "user" ? (
+            <>
+              <Nav.Link as={Link} to="/Order">
+                Order
+              </Nav.Link>
+              <Button onClick={props.onLogout} variant="outline-success">
+                Logout {props.user.name}
+              </Button>
+            </>
+          ) : (
+            <Button onClick={props.onLogout} variant="outline-success">
+              Logout {props.user.name}
+            </Button>
+          )}
         </Nav>
         <Form onSubmit={props.handleSearch} inline>
           <FormControl

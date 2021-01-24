@@ -22,18 +22,17 @@ function Items(props) {
         Error occured while loading items: {Error.message}
       </Alert>
     );
-  } else
-    if (!isLoaded) {
-      return (
-        <Alert variant="warning">
-          <Spinner animation="border" />
-          Loading items, please wait...
-        </Alert>
-      );
-    } else {
-
-      return <div className="Items">
-        {itemFilter(props.searchRequest).map(item =>
+  } else if (!isLoaded) {
+    return (
+      <Alert variant="warning">
+        <Spinner animation="border" />
+        Loading items, please wait...
+      </Alert>
+    );
+  } else {
+    return (
+      <div className="Items">
+        {itemFilter(props.searchRequest).map((item) => (
           <Item
             handleItemBuy={props.handleItemBuy}
             handleItemDelete={props.handleItemDelete}
@@ -45,24 +44,22 @@ function Items(props) {
             Item={item}
             key={item._id}
           />
-        )}
-        {props.LoggedIn && props.user.role === "admin"
-          ? (<div>
-            <Card
-              onClick={() => {
-                history.push("/CreateItem");
-              }}
-              className="AddItem"
-            >
-              <Card.Body>
-                <p className="noselect">+</p>
-              </Card.Body>
-            </Card>
-          </div>)
-          : null}
+        ))}
+        {props.LoggedIn && props.user.role === "admin" ? (
+          <Card
+            onClick={() => {
+              history.push("/CreateItem");
+            }}
+            className="AddItem"
+          >
+            <Card.Body>
+              <p className="noselect">+</p>
+            </Card.Body>
+          </Card>
+        ) : null}
       </div>
-    }
+    );
+  }
 }
-
 
 export default Items;
