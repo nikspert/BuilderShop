@@ -17,11 +17,17 @@ export default function SignUpForm(props) {
           type="text"
           placeholder="Name"
           name="name"
+          required
         />
       </Form.Group>
       <Form.Group controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" name="email" />
+        <Form.Control
+          type="email"
+          placeholder="Enter email"
+          name="email"
+          required
+        />
         <Form.Text className="text-muted">
           We'll never share your email with anyone else.
         </Form.Text>
@@ -29,17 +35,22 @@ export default function SignUpForm(props) {
 
       <Form.Group controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Password" name="password" />
+        <Form.Control
+          type="password"
+          placeholder="Password"
+          name="password"
+          required
+        />
       </Form.Group>
 
       <Form.Group controlId="formBasicRole">
         <Form.Label>Role</Form.Label>
-        <Form.Control as="select" defaultValue="user" name="role">
+        <Form.Control as="select" defaultValue="user" name="role" required>
           <option>user</option>
           <option>admin</option>
         </Form.Control>
       </Form.Group>
-      {props.submitButton()}
+      {props.submitButton}
     </Form>
   );
 }

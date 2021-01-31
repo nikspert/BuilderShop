@@ -1,0 +1,15 @@
+export const REQUEST_STARTED = "REQUEST_STARTED";
+export const REQUEST_FAILURE = "REQUEST_FAILURE";
+
+export const CREATE_ITEM = "CREATE_ITEM";
+export const GET_ITEMS = "GET_ITEMS";
+export const EDIT_ITEM = "EDIT_ITEM";
+export const DELETE_ITEM = "DELETE_ITEM";
+
+export const CREATE_ORDER = "CREATE_ORDER";
+
+export const AUTHORIZE = "AUTHORIZE";
+export const LOGOUT = "LOGOUT";
+
+export const CHANGE_SEARCH_REQUEST = "CHANGE_SEARCH_REQUEST";
+export const CHANGE_FORM_STATUS = "CHANGE_FORM_STATUS";

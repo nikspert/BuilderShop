@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Table } from "react-bootstrap";
+import { requestHandler, getFormData } from "../../../utils/helpers";
+import { createOrder } from "../../../API/Order";
 
 export default function OrderForm(props) {
   const [orderItems, setOrderItems] = useState([]);
@@ -17,30 +19,35 @@ export default function OrderForm(props) {
     setOrderItems(orderItems.filter((orderItem) => orderItem !== item));
   };
 
-  const dispayOrderItems = () => {
-    let order = orderItems;
-    return order.map((orderItem) => {
-      return (
-        <tr key={orderItem.title}>
-          <td>{orderItem.title}</td>
-          <td>{orderItem.count}</td>
-          <td>
-            <Button
-              onClick={handleOrderRemoveItem.bind(this, orderItem)}
-              variant="danger"
-            >
-              X
-            </Button>
-          </td>
-        </tr>
-      );
-    });
+  const handleOrderCreate = (e, setFormState) => {
+    let orderInfo = getFormData(e);
+    let order = JSON.parse(localStorage.getItem("order"));
+    if (order == null || order.length === 0) {
+      setFormState("error");
+    } else {
+      order = order.map((orderItem) => {
+        delete orderItem["title"];
+        return orderItem;
+      });
+      requestHandler(createOrder, setFormState, {
+        Bearer: `Bearer ${props.user.token}`,
+        data: { ...orderInfo, order },
+      })
+        .then((result) => {
+          localStorage.setItem("order", "null");
+          setOrderItems([]);
+        })
+        .catch((error) => {
+          console.log(error);
+          setFormState("error");
+        });
+    }
   };
   return (
     <div>
       <Form
         onSubmit={(e) => {
-          props.onSubmit(e, props.setFormState, setOrderItems);
+          handleOrderCreate(e, props.setFormState);
         }}
       >
         <Table striped bordered hover>
@@ -51,7 +58,24 @@ export default function OrderForm(props) {
               <th>Remove item</th>
             </tr>
           </thead>
-          <tbody>{dispayOrderItems()}</tbody>
+          <tbody>
+            {orderItems.map((orderItem) => {
+              return (
+                <tr key={orderItem.title}>
+                  <td>{orderItem.title}</td>
+                  <td>{orderItem.count}</td>
+                  <td>
+                    <Button
+                      onClick={handleOrderRemoveItem.bind(this, orderItem)}
+                      variant="danger"
+                    >
+                      X
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </Table>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Phone number</Form.Label>
@@ -70,7 +94,7 @@ export default function OrderForm(props) {
             name="addition"
           />
         </Form.Group>
-        {props.submitButton()}
+        {props.submitButton}
       </Form>
     </div>
   );

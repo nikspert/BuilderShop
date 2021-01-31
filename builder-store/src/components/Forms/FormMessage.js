@@ -3,14 +3,6 @@ import { Alert, Spinner } from "react-bootstrap";
 
 export default function FormMessage(props) {
   switch (props.status) {
-    case "succsess": {
-      return (
-        <Alert variant="success">
-          {props.objective} was completed succesfully
-        </Alert>
-      );
-    }
-
     case "error": {
       return (
         <Alert variant="danger">
@@ -47,6 +39,30 @@ export default function FormMessage(props) {
           Fill the fields below to perform {props.objective}
         </Alert>
       );
+    }
+  }
+}
+export function Message(props) {
+  switch (props.status) {
+    case "error": {
+      return <Alert variant="danger">Internal server error has occured</Alert>;
+    }
+    case "loading": {
+      return (
+        <Alert variant="primary">
+          <Spinner animation="border" />
+          Loading in proggress
+        </Alert>
+      );
+    }
+    case "success": {
+      return <Alert variant="success">Completed succesfully</Alert>;
+    }
+    case "pending": {
+      return null;
+    }
+    default: {
+      return null;
     }
   }
 }

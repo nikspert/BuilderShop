@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Container } from "react-bootstrap";
 import {
   BrowserRouter as Router,
@@ -7,6 +7,18 @@ import {
   Redirect,
 } from "react-router-dom";
 import PrivateRoute from "./utils/components/PrivateRoute";
+
+import { connect } from "react-redux";
+import {
+  makeRequest,
+  createItem as createItemAction,
+  getItems as getItemsAction,
+  editItem as editItemAction,
+  authorize,
+  logout,
+  changeFormStatus,
+  changeSearchRequest,
+} from "./Redux/actions";
 
 import Items from "./components/Items/Items";
 import Navigation from "./components/Navigation/Navigation";
@@ -18,117 +30,47 @@ import FormContainerPage from "./components/Forms/FormContainerPage";
 import NotFound from "./utils/components/NotFound";
 
 import { SignIn, SignUp } from "./API/Auth";
-import { createItem, updateItem, deleteItem, getItems } from "./API/Items";
+import { createItem, updateItem, getItems } from "./API/Items";
 import { createOrder } from "./API/Order";
 import { partial, getFormData, requestHandler } from "./utils/helpers";
 
 function App(props) {
-  const [LoggedIn, setLoggedIn] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [user, setUser] = useState(null);
-  const [itemsLoadingError, setError] = useState(null);
-  const [items, setItems] = useState([]);
-  const [searchRequest, setSearchRequest] = useState("");
-
+  const { makeRequest } = props;
   useEffect(() => {
-    getItems().then(
-      (result) => {
-        setItems(result.data);
-        setIsLoaded(true);
-      },
-      (error) => {
-        setError(error);
-      }
-    );
-  }, []);
+    makeRequest(getItems, getItemsAction);
+  }, [makeRequest]);
 
   const onLogout = () => {
-    setLoggedIn(false);
-    setUser(null);
+    props.logout();
   };
 
   const authHandler = (authRequest, e, setFormState) => {
     let data = getFormData(e);
-    requestHandler(authRequest, setFormState, data)
-      .then((result) => {
-        setUser(result);
-        setLoggedIn(true);
-      })
-      .catch((error) => {
-        setFormState("error");
-      });
+    makeRequest(authRequest, authorize, data);
   };
   const handleSignIn = partial(authHandler, SignIn);
   const handleSignUp = partial(authHandler, SignUp);
 
   const handleSearch = (e) => {
     const search = getFormData(e).request.toLowerCase();
-    setSearchRequest(search);
+    props.setSearchRequest(search);
   };
 
   const handleItemCreate = (e, setFormState) => {
     let data = getFormData(e);
-    requestHandler(createItem, setFormState, {
-      Bearer: `Bearer ${user.token}`,
+    makeRequest(createItem, createItemAction, {
+      Bearer: `Bearer ${props.user.token}`,
       data,
-    })
-      .then((result) => {
-        setItems((prevState) => [...prevState, result.data]);
-        e.target.reset();
-      })
-      .catch((error) => {
-        console.log(error);
-        setFormState("error");
-      });
-  };
-
-  const handleItemBuy = (item) => {
-    let order = JSON.parse(localStorage.getItem("order")) || [];
-    const index = order.findIndex((product) => {
-      return product.item === item._id;
     });
-    index !== -1
-      ? order[index].count++
-      : order.push({ title: item.name, item: item._id, count: 1 });
-    localStorage.setItem("order", JSON.stringify(order));
   };
 
   const handleItemUpdate = (e, setFormState, id) => {
     let data = getFormData(e);
-    requestHandler(updateItem, setFormState, {
-      Bearer: `Bearer ${user.token}`,
+    makeRequest(updateItem, editItemAction, {
+      Bearer: `Bearer ${props.user.token}`,
       data,
       id,
-    })
-      .then((result) => {
-        setItems(
-          items.map((item) => {
-            if (item._id === id) return result.data;
-            else return item;
-          })
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-        setFormState("error");
-      });
-  };
-  const handleItemDelete = (id) => {
-    requestHandler(deleteItem, setIsLoaded, {
-      Bearer: `Bearer ${user.token}`,
-      id,
-    })
-      .then((result) => {
-        setItems(
-          items.filter((item) => {
-            return item._id !== id;
-          })
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("error");
-      });
+    });
   };
 
   const handleOrderCreate = (e, setFormState, setOrderItems) => {
@@ -142,7 +84,7 @@ function App(props) {
         return orderItem;
       });
       requestHandler(createOrder, setFormState, {
-        Bearer: `Bearer ${user.token}`,
+        Bearer: `Bearer ${props.user.token}`,
         data: { ...orderInfo, order },
       })
         .then((result) => {
@@ -155,113 +97,136 @@ function App(props) {
         });
     }
   };
-
+  console.log(props);
   return (
-    <>
-      <Router>
-        <Navigation
-          handleSearch={handleSearch}
-          onLogout={onLogout}
-          LoggedIn={LoggedIn}
-          user={user}
-        ></Navigation>
-        <Switch>
-          <Route exact path="/">
-            <Container className="Container">
-              <Items
-                Items={items}
-                isLoaded={isLoaded}
-                Error={itemsLoadingError}
-                searchRequest={searchRequest}
-                LoggedIn={LoggedIn}
-                user={user}
-                handleItemBuy={handleItemBuy}
-                handleItemDelete={handleItemDelete}
-                handleItemUpdate={handleItemUpdate}
-              ></Items>
-            </Container>
-          </Route>
-          <Route exact path="/SignIn">
-            <FormContainerPage
-              reddirectComponent={<Redirect to="/" />}
-              objective={"Sign in"}
-            >
-              {(submitButton, setFormState) => {
-                return (
-                  <SignInForm
-                    onSubmit={handleSignIn}
-                    submitButton={submitButton}
-                    setFormState={setFormState}
-                  ></SignInForm>
-                );
-              }}
-            </FormContainerPage>
-          </Route>
-          <Route exact path="/SignUp">
-            <FormContainerPage
-              reddirectComponent={<Redirect to="/" />}
-              objective={"Sign up"}
-            >
-              {(submitButton, setFormState) => {
-                return (
-                  <SignUpForm
-                    onSubmit={handleSignUp}
-                    submitButton={submitButton}
-                    setFormState={setFormState}
-                  ></SignUpForm>
-                );
-              }}
-            </FormContainerPage>
-          </Route>
-          <PrivateRoute LoggedIn={LoggedIn} exact path="/CreateItem">
-            <FormContainerPage objective={"Item creation"}>
-              {(submitButton, setFormState) => {
-                return (
-                  <ItemForm
-                    onSubmit={handleItemCreate}
-                    submitButton={submitButton}
-                    setFormState={setFormState}
-                  ></ItemForm>
-                );
-              }}
-            </FormContainerPage>
-          </PrivateRoute>
-          <PrivateRoute LoggedIn={LoggedIn} exact path="/EditItem/:id">
-            <FormContainerPage
-              reddirectComponent={<Redirect to="/" />}
-              objective={"Item editing"}
-            >
-              {(submitButton, setFormState, itemId) => {
-                return (
-                  <ItemForm
-                    onSubmit={handleItemUpdate}
-                    items={items}
-                    submitButton={submitButton}
-                    setFormState={setFormState}
-                    itemId={itemId}
-                  ></ItemForm>
-                );
-              }}
-            </FormContainerPage>
-          </PrivateRoute>
-          <PrivateRoute LoggedIn={LoggedIn} exact path="/Order">
-            <FormContainerPage objective={"Order creation"}>
-              {(submitButton, setFormState) => {
-                return (
-                  <OrderForm
-                    onSubmit={handleOrderCreate}
-                    submitButton={submitButton}
-                    setFormState={setFormState}
-                  ></OrderForm>
-                );
-              }}
-            </FormContainerPage>
-          </PrivateRoute>
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    </>
+    <Router>
+      <Navigation
+        handleSearch={handleSearch}
+        onLogout={onLogout}
+        LoggedIn={props.loggedIn}
+        user={props.user}
+      ></Navigation>
+      <Switch>
+        <Route exact path="/">
+          <Container className="Container">
+            <Items
+              Items={props.items}
+              searchRequest={props.searchRequest}
+              LoggedIn={props.loggedIn}
+              user={props.user}
+              setFormState={props.setFormState}
+              formState={props.formState}
+            ></Items>
+          </Container>
+        </Route>
+        <Route exact path="/SignIn">
+          <FormContainerPage
+            reddirectComponent={<Redirect to="/" />}
+            objective={"Sign in"}
+          >
+            {(submitButton, setFormState) => {
+              return (
+                <SignInForm
+                  onSubmit={handleSignIn}
+                  submitButton={submitButton}
+                  setFormState={setFormState}
+                ></SignInForm>
+              );
+            }}
+          </FormContainerPage>
+        </Route>
+        <Route exact path="/SignUp">
+          <FormContainerPage
+            reddirectComponent={<Redirect to="/" />}
+            objective={"Sign up"}
+          >
+            {(submitButton, setFormState) => {
+              return (
+                <SignUpForm
+                  onSubmit={handleSignUp}
+                  submitButton={submitButton}
+                  setFormState={setFormState}
+                ></SignUpForm>
+              );
+            }}
+          </FormContainerPage>
+        </Route>
+        <PrivateRoute LoggedIn={props.loggedIn} exact path="/CreateItem">
+          <FormContainerPage objective={"Item creation"}>
+            {(submitButton, setFormState) => {
+              return (
+                <ItemForm
+                  onSubmit={handleItemCreate}
+                  submitButton={submitButton}
+                  setFormState={setFormState}
+                ></ItemForm>
+              );
+            }}
+          </FormContainerPage>
+        </PrivateRoute>
+        <PrivateRoute LoggedIn={props.loggedIn} exact path="/EditItem/:id">
+          <FormContainerPage
+            reddirectComponent={<Redirect to="/" />}
+            objective={"Item editing"}
+          >
+            {(submitButton, setFormState, itemId) => {
+              return (
+                <ItemForm
+                  onSubmit={handleItemUpdate}
+                  items={props.items}
+                  submitButton={submitButton}
+                  setFormState={setFormState}
+                  itemId={itemId}
+                ></ItemForm>
+              );
+            }}
+          </FormContainerPage>
+        </PrivateRoute>
+        <PrivateRoute LoggedIn={props.loggedIn} exact path="/Order">
+          <FormContainerPage objective={"Order creation"}>
+            {(submitButton, setFormState) => {
+              return (
+                <OrderForm
+                  onSubmit={handleOrderCreate}
+                  submitButton={submitButton}
+                  setFormState={setFormState}
+                  user={props.user}
+                ></OrderForm>
+              );
+            }}
+          </FormContainerPage>
+        </PrivateRoute>
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
   );
 }
 
-export default App;
+const mapStateToProps = function (state) {
+  console.log(state);
+  return {
+    user: state.user,
+    loggedIn: state.loggedIn,
+    items: state.items,
+    searchRequest: state.searchRequest,
+    formState: state.formState,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    makeRequest: (request, action, params) => {
+      dispatch(makeRequest(request, action, params));
+    },
+    setFormState: (status) => {
+      dispatch(changeFormStatus(status));
+    },
+    setSearchRequest: (request) => {
+      dispatch(changeSearchRequest(request));
+    },
+    logout: () => {
+      dispatch(logout());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

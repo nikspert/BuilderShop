@@ -1,12 +1,38 @@
 import React from "react";
 import { Card, Button } from "react-bootstrap";
+import { connect } from "react-redux";
 import "../../Styles/Styles.css";
-
+import {
+  makeRequest,
+  deleteItem as deleteItemAction,
+  changeFormStatus,
+} from "../../Redux/actions";
+import { deleteItem } from "../../API/Items";
 import { useHistory } from "react-router-dom";
 
 function Item(props) {
   const history = useHistory();
-  const Item = props.Item;
+  const { Item, setFormState, makeRequest } = props;
+
+  const handleItemBuy = (item) => {
+    setFormState("loading");
+    let order = JSON.parse(localStorage.getItem("order")) || [];
+    const index = order.findIndex((product) => {
+      return product.item === item._id;
+    });
+    index !== -1
+      ? order[index].count++
+      : order.push({ title: item.name, item: item._id, count: 1 });
+    localStorage.setItem("order", JSON.stringify(order));
+    setFormState("success");
+  };
+
+  const handleItemDelete = (id) => {
+    makeRequest(deleteItem, deleteItemAction, {
+      Bearer: `Bearer ${props.user.token}`,
+      id,
+    });
+  };
 
   return (
     <Card className="Item">
@@ -28,7 +54,7 @@ function Item(props) {
             </Button>
 
             <Button
-              onClick={props.handleItemDelete.bind(this, Item._id)}
+              onClick={handleItemDelete.bind(this, Item._id)}
               variant="outline-danger"
             >
               Delete
@@ -36,7 +62,7 @@ function Item(props) {
           </>
         ) : props.user?.role === "user" ? (
           <Button
-            onClick={props.handleItemBuy.bind(this, Item)}
+            onClick={handleItemBuy.bind(this, Item)}
             variant="outline-primary"
           >
             Buy
@@ -46,41 +72,21 @@ function Item(props) {
     </Card>
   );
 }
+const mapStateToProps = function (state) {
+  return {
+    user: state.user,
+    loggedIn: state.loggedIn,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    makeRequest: (request, action, params) => {
+      dispatch(makeRequest(request, action, params));
+    },
+    setFormState: (status) => {
+      dispatch(changeFormStatus(status));
+    },
+  };
+};
 
-export default Item;
-
-// let footerLinks;
-// if (props.LoggedIn && props.user?.role === "admin") {
-//   footerLinks = (
-//     <>
-//       <Button
-//         onClick={() => {
-//           history.push(`/EditItem/${Item._id}`);
-//         }}
-//         variant="outline-info"
-//       >
-//         Edit
-//       </Button>
-
-//       <Button
-//         onClick={props.handleItemDelete.bind(this, Item._id)}
-//         variant="outline-danger"
-//       >
-//         Delete
-//       </Button>
-//     </>
-//   );
-// } else if (props.user?.role === "user") {
-//   footerLinks = (
-//     <>
-//       <Button
-//         onClick={props.handleItemBuy.bind(this, Item)}
-//         variant="outline-primary"
-//       >
-//         Buy
-//       </Button>
-//     </>
-//   );
-// } else {
-//   footerLinks = <></>;
-// }
+export default connect(mapStateToProps, mapDispatchToProps)(Item);

@@ -18,6 +18,7 @@ export default function ItemForm(props) {
             type="text"
             placeholder="Name"
             name="name"
+            required
           />
         </Form.Group>
         <Form.Group controlId="formBasicNumber">
@@ -27,6 +28,7 @@ export default function ItemForm(props) {
             type="number"
             placeholder="Price"
             name="cost"
+            required
           />
         </Form.Group>
         <Form.Group controlId="formBasicNumber">
@@ -36,6 +38,7 @@ export default function ItemForm(props) {
             type="number"
             placeholder="Amount"
             name="amount"
+            required
           />
           <Form.Label>Item units</Form.Label>
           <Form.Control
@@ -43,6 +46,7 @@ export default function ItemForm(props) {
             type="text"
             placeholder="Unit"
             name="unit"
+            required
           />
         </Form.Group>
         <Form.Group controlId="formBasicText">
@@ -53,9 +57,10 @@ export default function ItemForm(props) {
             rows={3}
             placeholder="Description"
             name="description"
+            required
           />
         </Form.Group>
-        {props.submitButton()}
+        {props.submitButton}
       </Form>
     </>
   );
